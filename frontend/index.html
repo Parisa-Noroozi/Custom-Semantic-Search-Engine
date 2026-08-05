@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title> Search Engine</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1 class="title"> Search Engine</h1>
+    <div id="project-overview" class="project-overview">
+
+<h2>Custom Semantic Search Engine</h2>
+
+<p>
+This project is a custom-built search engine developed from scratch using Python and FastAPI.
+Instead of relying on external AI embedding libraries, it implements its own semantic ranking pipeline to demonstrate how modern search systems work internally.
+</p>
+
+<div class="feature-box">
+<h3>Tokenizer</h3>
+<p>
+Breaks the user's query into clean searchable words by removing punctuation, converting text to lowercase and preparing it for the search pipeline.
+</p>
+</div>
+
+<div class="feature-box">
+<h3>Intent Detection</h3>
+<p>
+Identifies the user's search purpose such as learning resources or PDF files and adjusts the ranking accordingly.
+</p>
+</div>
+
+<div class="feature-box">
+<h3>Query Expansion</h3>
+<p>
+Expands the original query using manually defined synonyms and related terms to retrieve more relevant documents.
+</p>
+</div>
+
+<div class="feature-box">
+<h3>Custom Embedding</h3>
+<p>
+Represents concepts as handcrafted semantic vectors based on manually designed knowledge relationships instead of pretrained AI models.
+</p>
+</div>
+
+<div class="feature-box">
+<h3>Semantic Similarity</h3>
+<p>
+Compares the semantic vectors of the query and documents using cosine similarity to measure conceptual closeness.
+</p>
+</div>
+
+<div class="feature-box">
+<h3>Relation Bonus</h3>
+<p>
+Rewards documents that contain concepts directly related to the user's query according to the knowledge base.
+</p>
+</div>
+
+<div class="feature-box">
+<h3>Category Bonus</h3>
+<p>
+Rewards documents that belong to the same semantic category as the searched concept.
+</p>
+</div>
+
+<div class="feature-box">
+<h3>BM25 Ranking</h3>
+<p>
+Ranks documents using keyword frequency and document statistics before semantic reranking is applied.
+</p>
+</div>
+
+<div class="feature-box">
+<h3>Final Ranking</h3>
+<p>
+Combines BM25, semantic similarity, relation bonus, category bonus and intent bonus into one final score.
+</p>
+</div>
+
+<div class="feature-box">
+<h3>Developer Mode</h3>
+<p>
+Displays every intermediate step of the ranking pipeline including tokenization, expansion, semantic scores and ranking explanations.
+</p>
+</div>
+
+</div>
+
+    <div class="search-box">
+
+        <input id="search-input" type="text" placeholder="Search anything..." />
+
+        <button id="search-button">Search</button>
+
+    </div>
+
+    <div id="intent-box"></div>
+
+    <div id="status"></div>
+
+    <div id="results"></div>
+    <div id="suggestions"></div>
+    
+
+
+
+    
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
