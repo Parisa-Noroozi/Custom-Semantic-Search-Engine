@@ -218,18 +218,18 @@ This project was intentionally implemented from scratch to understand the intern
 
 ## Screenshots
 
-### Home
+### Home Page
 
-!Home (screenshots\home.png)
+![Home Page](screenshots/home.png)
 
 ### Search Results
 
-!Search (screenshots\search.png)
+![Search Results](screenshots/search.png)
 
 ### Developer Mode
 
-!Developer (screenshots\Developer_mode.png)
+![Developer Mode](screenshots/Developer_mode.png)
 
 ### Full Page
 
-!Full (screenshots\full_page.png)
+![Full Page](screenshots/full_page.png)
