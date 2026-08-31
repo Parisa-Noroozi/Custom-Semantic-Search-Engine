@@ -88,7 +88,6 @@ class SearchEngine:
                         
 
                     semantic_score = self.semantic_ranker.semantic_score(  query.expanded_tokens, document_vector )
-                    semantic_weight = 0.5
                     intent_score = self.apply_intent_bonus( score, document, query.intents)
                     intent_bonus = intent_score - score
                     expansion_bonus = 0
@@ -103,13 +102,7 @@ class SearchEngine:
                         if token not in query.tokens and token in document_tokens:
                             expansion_bonus += 0.15
 
-            new_score = (
-                        score * weights["bm25"]
-                        +
-                        intent_bonus * weights["intent"]
-                        +
-                        expansion_bonus * weights["expansion"]
-                    )
+            
                 
                 
             query_concepts = self.semantic_ranker.embedding_engine.extract_concepts(  query.expanded_tokens )
@@ -118,14 +111,15 @@ class SearchEngine:
                 
             category_bonus = self.semantic_ranker.category_similarity(   query_concepts,  document_concepts   )
             final_score = self.ranker.calculate_score(
-                            bm25_score=score,
-                            semantic_score=semantic_score,
-                            expansion_bonus=expansion_bonus,
-                            intent_bonus=intent_bonus,
-                            exact_bonus=exact_bonus+ relation_bonus
-                        )
-            final_score += relation_bonus
-            final_score += category_bonus
+                                bm25_score=score,
+                                semantic_score=semantic_score,
+                                expansion_bonus=expansion_bonus,
+                                intent_bonus=intent_bonus,
+                                exact_bonus=exact_bonus,
+                                relation_bonus=relation_bonus,
+                                category_bonus=category_bonus,
+                                weights=weights,
+                            )
 
             mached_intents =[]
             document_tokens = set(tokenize(document))
@@ -153,7 +147,9 @@ class SearchEngine:
                         reason.append(f"Matched Intent: {intent}")
 
             reason.append(f"BM25 Score: {round(score,2)}")
-            reason.append(f"Intent Bonus: +{round(intent_bonus,2)}")  
+            reason.append(f"Intent Bonus: +{round(intent_bonus,2)}")
+            reason.append(f"Expansion Bonus: +{round(expansion_bonus,2)}")
+            reason.append(f"Exact Match Bonus: +{round(exact_bonus,2)}")
             reason.append(f"Semantic Score: {round(semantic_score,3)}")
                 
                 
@@ -170,11 +166,11 @@ class SearchEngine:
                         "intent_weight": weights["intent"],
                         "expansion_weight": weights["expansion"],
                         "semantic_score": round(semantic_score,3),
-                        "semantic_weight": semantic_weight,
+                        "semantic_weight": weights["semantic"],
                         "ranking_reason": weights["reason"],
                         "matched_intents": mached_intents,
                         "reason":reason,
-                        "relation_bonus": relation_bonus,
+                        "exact_bonus": round(exact_bonus, 2),
                         "relation_bonus": round(relation_bonus, 2),
                         "category_bonus": round(category_bonus, 2),
                         "query_concepts": query_concepts,
