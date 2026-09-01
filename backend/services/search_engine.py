@@ -51,6 +51,7 @@ class SearchEngine:
         
     def search(self,query):
         tokens = tokenize(query.original_query)
+        query.set_tokens(tokens)
         intents = self.intent_detector.detect_intent(tokens)
         query.set_intents(intents)
 
