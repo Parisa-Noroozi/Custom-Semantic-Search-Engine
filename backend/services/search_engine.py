@@ -66,6 +66,9 @@ class SearchEngine:
             )
         
         print("ranking strategy:",weights)
+        
+        query_vector = self.semantic_ranker.get_query_vector(query.expanded_tokens)
+        
         results=self.search_function(query.expanded_tokens, self.documents,self.index, )
         
 
@@ -84,9 +87,9 @@ class SearchEngine:
                 if normalized_token in self.semantic_ranker.embedding_engine.knowledge:
                     document_concepts.append(normalized_token)
 
-            semantic_score = self.semantic_ranker.semantic_score(
-                query.expanded_tokens,
-                document_vector
+            semantic_score = self.semantic_ranker.semantic_score_from_vector(
+                query_vector,
+                document_vector,
             )
 
             intent_score = self.apply_intent_bonus(
