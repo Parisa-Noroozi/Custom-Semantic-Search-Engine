@@ -72,35 +72,47 @@ class SearchEngine:
         new_results = []
         for score, document in results:
             document_tokens = tokenize(document)
+            document_token_set = set(document_tokens)
             document_concepts = []
             document_vector = self.document_embedding.get(document)
+
             for token in document_tokens:
-                    token = self.semantic_ranker.embedding_engine.normalize_token(token)
-                    if token in self.semantic_ranker.embedding_engine.knowledge:
-                        document_concepts.append(token)
-                        
+                normalized_token = (
+                    self.semantic_ranker.embedding_engine.normalize_token(token)
+                )
 
-                    semantic_score = self.semantic_ranker.semantic_score(  query.expanded_tokens, document_vector )
-                    intent_score = self.apply_intent_bonus( score, document, query.intents)
-                    intent_bonus = intent_score - score
-                    expansion_bonus = 0
-                    document_tokens = set(tokenize(document))
-                    exact_bonus = 0
+                if normalized_token in self.semantic_ranker.embedding_engine.knowledge:
+                    document_concepts.append(normalized_token)
 
-                    for token in query.tokens:
-                        if token in document_tokens:
-                            exact_bonus += 2
+            semantic_score = self.semantic_ranker.semantic_score(
+                query.expanded_tokens,
+                document_vector
+            )
 
-                    for token in query.expanded_tokens:
-                        if token not in query.tokens and token in document_tokens:
-                            expansion_bonus += query.expansion_weights.get(token, 0)
+            intent_score = self.apply_intent_bonus(
+                score,
+                document,
+                query.intents
+            )
+            intent_bonus = intent_score - score
+
+            exact_bonus = 0
+
+            for token in query.tokens:
+                if token in document_token_set:
+                    exact_bonus += 2
+
+            expansion_bonus = 0
+
+            for token in query.expanded_tokens:
+                if token not in query.tokens and token in document_token_set:
+                    expansion_bonus += query.expansion_weights.get(token, 0)
 
             
                 
                 
             query_concepts = self.semantic_ranker.embedding_engine.extract_concepts(  query.expanded_tokens )
-            document_tokens = set(tokenize(document))
-            relation_bonus = self.ranker.relation_bonus(  query_concepts,  document_tokens,   KNOWLEDGE_BASE )
+            relation_bonus = self.ranker.relation_bonus(query_concepts,document_token_set,KNOWLEDGE_BASE)
                 
             category_bonus = self.semantic_ranker.category_similarity(   query_concepts,  document_concepts   )
             final_score = self.ranker.calculate_score(
@@ -115,16 +127,15 @@ class SearchEngine:
                             )
 
             mached_intents =[]
-            document_tokens = set(tokenize(document))
             for intent, percentage in query.intents:
                     keywords = self.intent_keywords.get(intent, set())
-                    if document_tokens.intersection(keywords):
+                    if document_token_set.intersection(keywords):
                         mached_intents.append(intent)
                         
                         
             
             reason = []
-            document_tokens = set(tokenize(document))
+            document_token_set = set(tokenize(document))
             if relation_bonus > 0:
                 reason.append(f"Relation Bonus: +{round(relation_bonus,2)}")
 
