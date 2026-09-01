@@ -51,22 +51,15 @@ class SearchEngine:
         
     def search(self,query):
         tokens = tokenize(query.original_query)
+        intents = self.intent_detector.detect_intent(tokens)
+        query.set_intents(intents)
+
         expanded_tokens, expansion_reason, expansion_weights = self.query_expander.expand_query(tokens)
+
         query.set_expanded_tokens(expanded_tokens)
         query.set_expansion_reason(expansion_reason)
-        print(query.expansion_weights)
         query.set_expansion_weights(expansion_weights)
-        query.set_tokens(tokens)
-        
-        print("Original Tokens:", tokens)
-        print("Expanded Tokens:", expanded_tokens)
-        
-        intents = self.intent_detector.detect_intent(query.expanded_tokens)
-           
-        print("tokens:",query.tokens)
-        print("intents:",intents)
-
-        query.set_intents(intents)
+                
         weights = self.ranking_strategy.get_weights(
                 query.intents,
                 query.tokens
