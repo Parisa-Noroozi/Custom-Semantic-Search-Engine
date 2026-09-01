@@ -48,6 +48,22 @@ class SearchEngine:
                 bonus += percentage / 100
         return score + bonus
 
+
+    @staticmethod
+    def contains_term(document_tokens, term):
+        term_tokens = term.split()
+
+        if len(term_tokens) == 1:
+            return term in document_tokens
+
+        term_length = len(term_tokens)
+
+        for i in range(len(document_tokens) - term_length + 1):
+            if document_tokens[i:i + term_length] == term_tokens:
+                return True
+
+        return False
+    
         
     def search(self,query):
         tokens = tokenize(query.original_query)
@@ -60,6 +76,7 @@ class SearchEngine:
         query.set_expanded_tokens(expanded_tokens)
         query.set_expansion_reason(expansion_reason)
         query.set_expansion_weights(expansion_weights)
+        
                 
         weights = self.ranking_strategy.get_weights(
                 query.intents,
@@ -105,14 +122,17 @@ class SearchEngine:
             for token in query.tokens:
                 if token in document_token_set:
                     exact_bonus += 2
+                    
+                    
 
             expansion_bonus = 0
-
             for token in query.expanded_tokens:
-                if token not in query.tokens and token in document_token_set:
-                    expansion_bonus += query.expansion_weights.get(token, 0)
+                if token in query.tokens:
+                    continue
 
-            
+                if self.contains_term(document_tokens, token):
+                    expansion_bonus += query.expansion_weights.get(token, 0)
+                    
                 
                 
             query_concepts = self.semantic_ranker.embedding_engine.extract_concepts(  query.expanded_tokens )
