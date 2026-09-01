@@ -187,6 +187,7 @@ class SearchEngine:
  
                 
         new_results.sort( key=lambda item: item["final_score"],  reverse=True)
+        new_results = new_results[:5]
             
         print("\n========== FINAL RESULTS ==========")
         for result in new_results:

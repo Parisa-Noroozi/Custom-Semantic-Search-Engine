@@ -17,7 +17,6 @@ def search(tokens, documents, index, ):
             s = bm25(w, doc, documents, doc_len, avg_len)
             print(f"{w} -> {s}")
             score += bm25(w, doc, documents, doc_len, avg_len)
-        if score > 0:
-            results.append((score, doc))
+        results.append((score, doc))
     results.sort(reverse=True)
-    return results[:5]
+    return results
