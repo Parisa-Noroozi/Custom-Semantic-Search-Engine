@@ -1,16 +1,20 @@
 from backend.services.query.tokenizer import tokenize
 from backend.services.query.spell_corrector import correct_word
-from backend.services.search.bm25 import bm25
+from backend.services.search.bm25 import bm25, idf
 from backend.services.intent_detector import IntentDetector
 
 def search(tokens, documents, index, ):
     results=[]
-    avg_len = sum(len(tokenize(d)) for d in documents) / len(documents)
     
+    tokenized_documents = [ tokenize(document) for document in documents]
+
+    avg_len = sum( len(document_tokens) for document_tokens in tokenized_documents ) / len(tokenized_documents)
+
+    idf_scores = { token: idf(token, tokenized_documents)for token in tokens }
       
-    for i, doc in enumerate(documents):
+    for doc, document_tokens in zip( documents, tokenized_documents, ):
         score = 0
-        doc_len = len(tokenize(doc))
+        doc_len = len(document_tokens)
        
 
         print(f"\nDocument: {doc}")
@@ -18,10 +22,10 @@ def search(tokens, documents, index, ):
         for w in tokens:
             term_score = bm25(
                 w,
-                doc,
-                documents,
+                document_tokens,
                 doc_len,
                 avg_len,
+                idf_scores[w],
             )
 
             print(f"{w} -> {term_score}")
