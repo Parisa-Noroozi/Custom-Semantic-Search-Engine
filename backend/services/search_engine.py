@@ -93,7 +93,7 @@ class SearchEngine:
 
                     for token in query.expanded_tokens:
                         if token not in query.tokens and token in document_tokens:
-                            expansion_bonus += 0.15
+                            expansion_bonus += query.expansion_weights.get(token, 0)
 
             
                 
