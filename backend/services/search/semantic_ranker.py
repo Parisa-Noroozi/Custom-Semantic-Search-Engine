@@ -8,16 +8,32 @@ class SemanticRanker:
     def __init__(self):
         self.embedding_engine = EmbeddingEngine()
 
+    def get_query_vector(self, query_tokens):
+        return self.embedding_engine.get_query_vector(query_tokens)
+
+
+    def semantic_score_from_vector(
+            self,
+            query_vector,
+            document_vector,
+    ):
+        if query_vector is None or document_vector is None:
+            return 0
+
+        return cosine_similarity(query_vector, document_vector)
+
+
     def semantic_score(
             self,
             query_tokens,
-            document_vector
+            document_vector,
     ):
-        query_vector = self.embedding_engine.get_query_vector( query_tokens)
-        
-        if query_vector is None or document_vector is None:
-          return 0
-        return cosine_similarity( query_vector, document_vector)
+        query_vector = self.get_query_vector(query_tokens)
+
+        return self.semantic_score_from_vector(
+            query_vector,
+            document_vector,
+        )
         
         
         
