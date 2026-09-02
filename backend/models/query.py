@@ -20,13 +20,13 @@ class Query:
 
         self.intents = []
 
-        self.expanded_query = []
+        self.expanded_tokens = []
 
         self.search_time = None
 
         self.status = "Created"
         
-        self.expanded_reason={}
+        self.expansion_reason = {}
         
         self.expansion_weights = {}
         
