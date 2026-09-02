@@ -213,33 +213,7 @@ KNOWLEDGE_BASE = {
     ]
 },
 
-"machine_learning": {
-    "aliases": [
-        "ml"
-    ],
-    "topics": {
-        "machine_learning": 1.0,
-        "deep_learning": 0.7
-    },
-    "relations": [
-        "tensorflow",
-        "pytorch",
-        "sklearn"
-    ]
-},
 
-"deep_learning": {
-    "aliases": [
-        "dl"
-    ],
-    "topics": {
-        "deep_learning": 1.0
-    },
-    "relations": [
-        "tensorflow",
-        "pytorch"
-    ]
-},
 
 "sklearn": {
     "aliases": [

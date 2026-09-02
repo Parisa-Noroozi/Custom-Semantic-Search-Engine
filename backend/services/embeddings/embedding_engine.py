@@ -86,10 +86,9 @@ class EmbeddingEngine:
     def extract_concepts(self, tokens):
         concepts = []
         for token in tokens:
-            token = self.normalize_token(token)
-            if token in self.knowledge:
-                concepts.append(token)
+            normalized_token = self.normalize_token(token)
+            if ( normalized_token in self.knowledge and normalized_token not in concepts):
+                concepts.append(normalized_token)
         return concepts
-        
     
 
