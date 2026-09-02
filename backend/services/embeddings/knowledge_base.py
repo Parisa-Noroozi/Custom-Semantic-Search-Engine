@@ -105,7 +105,7 @@ KNOWLEDGE_BASE = {
     "category": "library",
     "aliases": ["np"],
     "topics": {
-        "python": 1.0,
+        "programming": 1.0,
         "data_science": 1.0,
         "scientific_computing": 1.0,
         "machine_learning": 0.8,
@@ -126,7 +126,7 @@ KNOWLEDGE_BASE = {
     "category": "library",
     "aliases": ["pd"],
     "topics": {
-        "python": 1.0,
+        "programming": 1.0,
         "data_science": 1.0,
         "data_analysis": 1.0,
         "machine_learning": 0.8,
@@ -205,8 +205,8 @@ KNOWLEDGE_BASE = {
 "scipy": {
     "aliases": [],
     "topics": {
-        "python": 1.0,
-        "scientific": 1.0
+        "programming": 1.0,
+        "scientific_computing": 1.0
     },
     "relations": [
         "numpy"
@@ -221,7 +221,7 @@ KNOWLEDGE_BASE = {
     ],
     "topics": {
         "machine_learning": 1.0,
-        "python": 0.9
+        "programming": 0.9
     },
     "relations": [
         "python",
