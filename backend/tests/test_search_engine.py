@@ -15,12 +15,11 @@ documents = [
     "Data science uses Python"
 
 ]
-index, frequency_table, document_frequency = build_index(documents)
+index,  document_frequency = build_index(documents)
 
 engine = SearchEngine(
     documents,
     index,
-    frequency_table
 )
 
 query = Query("python tutorial pdf")
