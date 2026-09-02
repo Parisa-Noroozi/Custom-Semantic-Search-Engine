@@ -3,10 +3,8 @@ from backend.models.query import Query
 from backend.services.query.autocomplete import autocomplete
 from backend.services.search.index import build_index
 from fastapi.middleware.cors import CORSMiddleware
-import time
-from backend.services.intent_detector import IntentDetector
 from backend.services.search_engine import SearchEngine
-from backend.services.query_expander import QueryExpander
+
 
 app = FastAPI()
 app.add_middleware(
@@ -96,7 +94,7 @@ documents = [
 
     "Artificial intelligence handbook"  
 ]
-index,  document_frequency = build_index(documents)
+index = build_index(documents)
 engine=SearchEngine(documents,index)
 
 @app.get("/search")

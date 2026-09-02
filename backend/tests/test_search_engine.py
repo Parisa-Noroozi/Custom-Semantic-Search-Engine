@@ -15,7 +15,7 @@ documents = [
     "Data science uses Python"
 
 ]
-index,  document_frequency = build_index(documents)
+index = build_index(documents)
 
 engine = SearchEngine(
     documents,
