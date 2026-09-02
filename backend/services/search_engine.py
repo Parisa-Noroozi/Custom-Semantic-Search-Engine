@@ -87,7 +87,7 @@ class SearchEngine:
         
         query_vector = self.semantic_ranker.get_query_vector(query.expanded_tokens)
         
-        results=self.search_function(query.expanded_tokens, self.documents,self.index, )
+        results=self.search_function(query.expanded_tokens, self.documents )
         
 
         new_results = []
