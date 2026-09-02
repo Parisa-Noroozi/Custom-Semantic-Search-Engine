@@ -3,7 +3,7 @@ from backend.services.query.spell_corrector import correct_word
 from backend.services.search.bm25 import bm25, idf
 from backend.services.intent_detector import IntentDetector
 
-def search(tokens, documents, index, ):
+def search(tokens, documents ):
     results=[]
     
     tokenized_documents = [ tokenize(document) for document in documents]
