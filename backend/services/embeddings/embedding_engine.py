@@ -12,7 +12,17 @@ class EmbeddingEngine:
     def __init__(self):
         self.knowledge = KNOWLEDGE_BASE
         self.topic_space = TOPIC_SPACE
+        self.validate_topic_space()
         
+        
+    def validate_topic_space(self):
+        valid_topics = set(self.topic_space)
+        for concept, info in self.knowledge.items():
+            for topic in info.get("topics", {}):
+                if topic not in valid_topics:
+                    raise ValueError(
+                        f"Unknown topic '{topic}' in concept '{concept}'"
+                    )
         
     def normalize_token(self, token):
         token = token.lower()
@@ -29,9 +39,7 @@ class EmbeddingEngine:
         
     def get_vector(self, concept):
         concept = concept.lower()
-        print("Searching:", concept)
         if concept not in self.knowledge:
-            print("NOT FOUND:", concept)
             return None
 
         topics = self.knowledge[concept]["topics"]
@@ -44,9 +52,6 @@ class EmbeddingEngine:
                 topics.get(topic, 0)
             )
             
-    
-        print("Found:", concept, vector)
-        
         return vector
     
     
