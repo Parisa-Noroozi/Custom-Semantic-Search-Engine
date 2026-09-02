@@ -24,10 +24,10 @@ engine = SearchEngine(
 
 query = Query("python tutorial pdf")
 
-result = engine.search(query)
+processed_query, results = engine.search(query)
 
-print(result.tokens)
-
-print(result.status)
-
+assert processed_query.tokens
+assert isinstance(results, list)
+assert len(results) > 0
+assert "python" in processed_query.tokens
 

@@ -2,106 +2,102 @@ from backend.services.embeddings.embedding_engine import EmbeddingEngine
 from backend.services.embeddings.similarity import cosine_similarity
 from backend.services.search.semantic_ranker import SemanticRanker
 
+
 engine = EmbeddingEngine()
 
-print("====== TEST 1 ======")
-print(engine.get_vector("python"))
 
-print("\n====== TEST 2 ======")
-print(engine.get_query_vector([
+python_vector = engine.get_vector("python")
+
+assert python_vector is not None
+assert len(python_vector) == len(engine.topic_space)
+
+
+query_vector = engine.get_query_vector([
     "python",
     "machine",
-    "learning"
-]))
+    "learning",
+])
 
-print("\n====== TEST 3 ======")
-print(engine.get_vector("banana"))
+assert query_vector is not None
+assert len(query_vector) == len(engine.topic_space)
 
-print("\n====== TEST 4 ======")
-print(engine.get_query_vector([
+
+unknown_vector = engine.get_vector("banana")
+
+assert unknown_vector is None
+
+
+unknown_query_vector = engine.get_query_vector([
     "banana",
-    "orange"
-]))
+    "orange",
+])
 
-print("\n====== TEST 5 ======")
+assert unknown_query_vector is None
 
-print(
-    engine.get_query_vector(
-        [
-            "python",
-            "banana",
-            "learning"
-        ]
-    )
-)
 
-print("\n====== TEST 6 ======")
+mixed_query_vector = engine.get_query_vector([
+    "python",
+    "banana",
+    "learning",
+])
 
-print(
-    engine.get_document_vector(
-        "Python programming tutorial"
-    )
-)
+assert mixed_query_vector is not None
+assert len(mixed_query_vector) == len(engine.topic_space)
 
-print("\n====== TEST 7 ======")
 
-query = engine.get_query_vector(
-
-    [
-
-        "python",
-
-        "learning"
-
-    ]
-
-)
-
-doc = engine.get_document_vector(
-
+document_vector = engine.get_document_vector(
     "Python programming tutorial"
-
 )
 
-print(
+assert document_vector is not None
+assert len(document_vector) == len(engine.topic_space)
 
-    cosine_similarity(
 
-        query,
+query_vector = engine.get_query_vector([
+    "python",
+    "learning",
+])
 
-        doc
-
-    )
-
+document_vector = engine.get_document_vector(
+    "Python programming tutorial"
 )
 
+similarity = cosine_similarity(
+    query_vector,
+    document_vector,
+)
+
+assert similarity > 0
+assert similarity <= 1
 
 
 ranker = SemanticRanker()
 
-print("\n====== TEST 8 ======")
+query_vector = ranker.get_query_vector([
+    "python",
+    "learning",
+])
 
-print(
-
-    ranker.semantic_score(
-
-        ["python", "learning"],
-
-        "Python programming tutorial"
-
-    )
-
+document_vector = engine.get_document_vector(
+    "Python programming tutorial"
 )
 
+score = ranker.semantic_score_from_vector(
+    query_vector,
+    document_vector,
+)
 
-engine = EmbeddingEngine()
+assert score > 0
+assert score <= 1
 
-print(engine.normalize_token("coding"))
-print(engine.normalize_token("programming"))
-print(engine.normalize_token("script"))
-print(engine.normalize_token("py"))
-print(engine.normalize_token("python"))
 
-print(engine.get_query_vector(["coding"]))
-print(engine.get_query_vector(["script"]))
-print(engine.get_query_vector(["programming"]))
+assert engine.normalize_token("coding") == "coding"
+assert engine.normalize_token("programming") == "programming"
+assert engine.normalize_token("script") == "script"
+assert engine.normalize_token("py") == "python"
+assert engine.normalize_token("python") == "python"
+
+
+assert engine.get_query_vector(["coding"]) is None
+assert engine.get_query_vector(["script"]) is None
+assert engine.get_query_vector(["programming"]) is None
