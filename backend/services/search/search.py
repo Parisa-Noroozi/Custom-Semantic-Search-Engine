@@ -1,5 +1,4 @@
 from backend.services.query.tokenizer import tokenize
-from backend.services.query.spell_corrector import correct_word
 from backend.services.search.bm25 import bm25, idf
 from backend.services.intent_detector import IntentDetector
 

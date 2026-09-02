@@ -96,8 +96,8 @@ documents = [
 
     "Artificial intelligence handbook"  
 ]
-index, frequency_table, document_frequency = build_index(documents)
-engine=SearchEngine(documents,index,frequency_table)
+index,  document_frequency = build_index(documents)
+engine=SearchEngine(documents,index)
 
 @app.get("/search")
 def search_api(q: str):
