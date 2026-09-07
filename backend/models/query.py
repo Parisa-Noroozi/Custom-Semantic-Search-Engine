@@ -14,38 +14,18 @@ class Query:
 
         self.tokens = []
 
-        self.corrected_query = ""
-
-        self.detected_keywords = []
-
         self.intents = []
 
         self.expanded_tokens = []
-
-        self.search_time = None
-
-        self.status = "Created"
         
         self.expansion_reason = {}
         
         self.expansion_weights = {}
-        
-    def start_search(self):
-
-       self.status = "Searching"
        
-       
-    def finish_search(self, search_time):
 
-     self.search_time = search_time
-
-     self.status = "Completed"
-     
-     
     def set_tokens(self, tokens):
 
      self.tokens = tokens
-     self.status ="Tokenized"
      
      
     def set_intents(self, intents):

@@ -19,7 +19,6 @@ index = build_index(documents)
 
 engine = SearchEngine(
     documents,
-    index,
 )
 
 query = Query("python tutorial pdf")
