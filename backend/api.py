@@ -16,8 +16,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 index = build_index(DOCUMENTS)
-engine=SearchEngine(DOCUMENTS,index)
+engine=SearchEngine(DOCUMENTS)
+
 
 @app.get("/search")
 def search_api(q: str):
