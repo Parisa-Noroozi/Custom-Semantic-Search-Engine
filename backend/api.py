@@ -95,7 +95,7 @@ documents = [
     "Artificial intelligence handbook"  
 ]
 index = build_index(documents)
-engine=SearchEngine(documents,index)
+engine=SearchEngine(documents)
 
 @app.get("/search")
 def search_api(q: str):

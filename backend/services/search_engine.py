@@ -9,9 +9,8 @@ from backend.services.embeddings.document_embeddings import DocumentEmbeddings
 from backend.services.embeddings.knowledge_base import KNOWLEDGE_BASE
 class SearchEngine:
     
-    def __init__(self,documents,index):
+    def __init__(self,documents):
         self.documents=documents
-        self.index=index
         self.intent_detector = IntentDetector()
         self.query_expander= QueryExpander()
         self.ranking_strategy = RankingStrategy()
