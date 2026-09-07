@@ -1,10 +1,8 @@
 from fastapi import FastAPI
 from backend.models.query import Query
-from backend.services.query.autocomplete import autocomplete
-from backend.services.search.index import build_index
 from fastapi.middleware.cors import CORSMiddleware
-from backend.services.search_engine import SearchEngine
 from backend.data.documents import DOCUMENTS
+from backend.dependencies import get_suggestions, search_engine
 
 
 app = FastAPI()
@@ -17,14 +15,13 @@ app.add_middleware(
 )
 
 
-index = build_index(DOCUMENTS)
-engine=SearchEngine(DOCUMENTS)
+
 
 
 @app.get("/search")
 def search_api(q: str):
     query = Query(q)
-    query, results = engine.search(query)
+    query, results = search_engine.search(query)
 
     return {
         "query":query.original_query,
@@ -47,7 +44,7 @@ def search_api(q: str):
 
 @app.get("/suggest")
 def suggest(q: str):
-    return autocomplete(q, index)
+    return get_suggestions(q)
 
 
 @app.get("/")
