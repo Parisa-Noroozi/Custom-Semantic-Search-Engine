@@ -72,7 +72,6 @@ class QueryExpander:
                     
                     
         expanded_tokens = list(dict.fromkeys(expanded_tokens))
-        print(expanded_tokens)
-        print(expansion_weights)
+       
 
         return expanded_tokens, expansion_reason,expansion_weights

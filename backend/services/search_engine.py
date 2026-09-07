@@ -82,7 +82,7 @@ class SearchEngine:
                 query.tokens
             )
         
-        print("ranking strategy:",weights)
+        
         
         query_vector = self.semantic_ranker.get_query_vector(query.expanded_tokens)
         
@@ -208,9 +208,7 @@ class SearchEngine:
         new_results.sort( key=lambda item: item["final_score"],  reverse=True)
         new_results = new_results[:5]
             
-        print("\n========== FINAL RESULTS ==========")
-        for result in new_results:
-                print(result)
+        
         results = new_results
 
         return query  , results

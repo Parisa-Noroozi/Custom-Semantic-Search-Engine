@@ -16,7 +16,7 @@ def search(tokens, documents ):
         doc_len = len(document_tokens)
        
 
-        print(f"\nDocument: {doc}")
+        
 
         for w in tokens:
             term_score = bm25(
@@ -27,7 +27,7 @@ def search(tokens, documents ):
                 idf_scores[w],
             )
 
-            print(f"{w} -> {term_score}")
+           
             score += term_score
             
         results.append((score, doc))
