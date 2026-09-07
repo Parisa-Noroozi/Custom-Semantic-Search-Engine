@@ -204,7 +204,7 @@ class SearchEngine:
                         
                     })
  
-                
+        new_results = [ result for result in new_results if result["final_score"] > 0]        
         new_results.sort( key=lambda item: item["final_score"],  reverse=True)
         new_results = new_results[:5]
             
