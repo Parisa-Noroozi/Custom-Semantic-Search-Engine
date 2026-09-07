@@ -29,19 +29,18 @@ async function search(){
     const start = performance.now();
 
     try{
-          console.log("1");
+          
 
         const response = await fetch(
             `http://127.0.0.1:8000/search?q=${encodeURIComponent(query)}`
         );
-        console.log("2");
+       
 
         const data = await response.json();
-        console.log("3");
-        console.log(data);
+        
 
         const results = data.results;
-          console.log("4");
+          
 
         const intents = data.intents;
         const originalQuery=data.query;
@@ -68,96 +67,158 @@ async function search(){
     }
 
     catch(error){
-        console.error(error)
+        console.error(error);
         statusDiv.innerHTML="Connection Error";
 
     }
 
 }
 
-function highlight(text, query) {
+function escapeHtml(value) {
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
 
-    if (!query) return text;
+
+function escapeRegex(value) {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+
+function highlight(text, query) {
+    const safeText = escapeHtml(text);
+
+    if (!query) {
+        return safeText;
+    }
 
     const words = [...new Set(
-        query.toLowerCase().split(/\s+/).filter(Boolean)
+        query
+            .split(/\s+/)
+            .filter(Boolean)
+            .map(escapeRegex)
     )];
+
+    if (words.length === 0) {
+        return safeText;
+    }
 
     const regex = new RegExp(`(${words.join("|")})`, "gi");
 
-    return text.replace(regex, "<mark>$1</mark>");
-} 
+    return safeText.replace(regex, "<mark>$1</mark>");
+}
 
-
-function createResultCard(item, index){
-
+function createResultCard(item, index) {
     const card = document.createElement("div");
 
     card.className = "result-card";
 
     card.innerHTML = `
-
         <h3>
-        ${index + 1}. ${highlight(item.text, input.value)}
+            ${index + 1}. ${highlight(item.text, input.value)}
         </h3>
 
         <hr>
 
-        <p><b>⭐ Final Score:</b> ${item.final_score}</p>
+        <p><b>⭐ Final Score:</b> ${escapeHtml(item.final_score)}</p>
 
-        <p><b>🔎 BM25 Score:</b> ${item.bm25_score}</p>
+        <p><b>🔎 BM25 Score:</b> ${escapeHtml(item.bm25_score)}</p>
 
-        <p><b>🧠 Semantic Score:</b> ${item.semantic_score}</p>
+        <p><b>🧠 Semantic Score:</b> ${escapeHtml(item.semantic_score)}</p>
 
-        <p><b>🔗 Relation Bonus:</b> +${item.relation_bonus}</p>
+        <p><b>🔗 Relation Bonus:</b> +${escapeHtml(item.relation_bonus)}</p>
 
-        <p><b>🧩 Category Bonus:</b> +${item.category_bonus}</p>
+        <p><b>🧩 Category Bonus:</b> +${escapeHtml(item.category_bonus)}</p>
 
-        <p><b>🎯 Query Concepts:</b> ${item.query_concepts.join(", ")}</p>
+        <p><b>🎯 Query Concepts:</b> ${
+            item.query_concepts.map(escapeHtml).join(", ")
+        }</p>
 
-        <p><b>🎯 Matched Intent:</b> ${item.matched_intents.join(", ")}</p>
-<hr>
+        <p><b>🎯 Matched Intent:</b> ${
+            item.matched_intents.map(escapeHtml).join(", ")
+        }</p>
 
-<p><b>📖 Why was this result selected?</b></p>
+        <hr>
 
-<ul>
+        <p><b>📖 Why was this result selected?</b></p>
 
-${item.reason.map(r => `<li>✔ ${r}</li>`).join("")}
-</ul>
+        <ul>
+            ${
+                item.reason
+                    .map(r => `<li>✔ ${escapeHtml(r)}</li>`)
+                    .join("")
+            }
+        </ul>
 
-            <hr>
+        <hr>
 
-            <b>⚙ Ranking Formula</b>
+        <b>⚙ Ranking Formula</b>
 
-            <p>BM25: ${item.bm25_score} × ${item.bm25_weight}</p>
+        <p>
+            BM25:
+            ${escapeHtml(item.bm25_score)}
+            ×
+            ${escapeHtml(item.bm25_weight)}
+        </p>
 
-            <p>Semantic: ${item.semantic_score} × ${item.semantic_weight}</p>
+        <p>
+            Semantic:
+            ${escapeHtml(item.semantic_score)}
+            ×
+            ${escapeHtml(item.semantic_weight)}
+        </p>
 
-            <p>Intent: ${item.intent_bonus} × ${item.intent_weight}</p>
+        <p>
+            Intent:
+            ${escapeHtml(item.intent_bonus)}
+            ×
+            ${escapeHtml(item.intent_weight)}
+        </p>
 
-            <p>Expansion: ${item.expansion_bonus} × ${item.expansion_weight}</p>
+        <p>
+            Expansion:
+            ${escapeHtml(item.expansion_bonus)}
+            ×
+            ${escapeHtml(item.expansion_weight)}
+        </p>
 
-            <p>Relation Bonus: +${item.relation_bonus}</p>
+        <p>
+            Exact Match Bonus:
+            +${escapeHtml(item.exact_bonus)}
+        </p>
 
-            <p>Category Bonus: +${item.category_bonus}</p>
+        <p>
+            Relation Bonus:
+            +${escapeHtml(item.relation_bonus)}
+        </p>
 
-            <p><b>Final Score:</b> ${item.final_score}</p>
+        <p>
+            Category Bonus:
+            +${escapeHtml(item.category_bonus)}
+        </p>
 
-            <p style="color:#888;">${item.ranking_reason}</p>
-            ,`
+        <p>
+            <b>Final Score:</b>
+            ${escapeHtml(item.final_score)}
+        </p>
+
+        <p style="color:#888;">
+            ${escapeHtml(item.ranking_reason)}
+        </p>
+    `;
+
     return card;
-
 }
 
 
-
 function renderResults(results){
-    console.log("enter results")
-    console.log("RESULT TYPE:", typeof results);
+    
 
-    console.log("IS ARRAY:", Array.isArray(results));
-
-    console.log("RESULT DATA:", results);
+    
     resultsDiv.innerHTML="";
 
     if(results.length===0){
@@ -175,7 +236,7 @@ resultsDiv.appendChild(empty);
         return;
 
     }
-    console.log("results");
+    
 
     const learningResults = [];
     const pdfResults = [];
@@ -246,11 +307,6 @@ resultsDiv.appendChild(empty);
 }
 
 
-function getRank(score) {
-    if (score > 0.8) return "high";
-    if (score > 0.3) return "medium";
-    return "low";
-}
 const suggestionsDiv = document.getElementById("suggestions");
 
 input.addEventListener("input", getSuggestions);
@@ -274,7 +330,7 @@ async function getSuggestions() {
         renderSuggestions(data);
 
     } catch (err) {
-        console.log(err);
+        console.error(err);
     }
 }
 
@@ -312,12 +368,15 @@ function renderIntents(intents) {
         return;
     }
 
-    box.innerHTML = "<h3>Detected Intent</h3>";
+    const title = document.createElement("h3");
+    title.textContent = "Detected Intent";
+    box.appendChild(title);
+
     intents.forEach(item => {
 
         const div = document.createElement("div");
 
-        div.innerHTML = `👉 ${item[0]} (${item[1]}%)`;
+        div.textContent = `👉 ${item[0]} (${item[1]}%)`;
 
         box.appendChild(div);
     });
@@ -342,27 +401,27 @@ function renderDeveloperInfo(originalQuery, tokens,expandedTokens,expansionReaso
 <div class="stats-grid">
 
     <div class="stat-card">
-        <div class="stat-number">${stats.documents_scanned}</div>
+        <div class="stat-number">${escapeHtml(stats.documents_scanned)}</div>
         <div class="stat-title">Documents</div>
     </div>
 
     <div class="stat-card">
-        <div class="stat-number">${stats.original_tokens}</div>
+        <div class="stat-number">${escapeHtml(stats.original_tokens)}</div>
         <div class="stat-title">Tokens</div>
     </div>
 
     <div class="stat-card">
-        <div class="stat-number">${stats.expanded_tokens}</div>
+        <div class="stat-number">${escapeHtml(stats.expanded_tokens)}</div>
         <div class="stat-title">Expanded</div>
     </div>
 
     <div class="stat-card">
-        <div class="stat-number">${stats.added_terms}</div>
+        <div class="stat-number">${escapeHtml(stats.added_terms)}</div>
         <div class="stat-title">Added Terms</div>
     </div>
 
     <div class="stat-card">
-        <div class="stat-number">${stats.returned_results}</div>
+        <div class="stat-number">${escapeHtml(stats.returned_results)}</div>
         <div class="stat-title">Results</div>
     </div>
 
@@ -374,17 +433,17 @@ function renderDeveloperInfo(originalQuery, tokens,expandedTokens,expansionReaso
 
     <h3>Original Query</h3>
 
-    <p>${originalQuery}</p>
+    <p>${escapeHtml(originalQuery)}</p>
 
     <hr>
 
     <h3>Tokens</h3>
 
-    <p>${tokens.join(" • ")}</p>
+    <p>${tokens.map(escapeHtml).join(" • ")}</p>
 
 
     <h3>Expanded Query</h3>
-    <p>${expandedTokens.join("  •  ")}</p>
+    <p>${expandedTokens.map(escapeHtml).join(" • ")}</p>
 
     <h3>Expansion Details</h3>
         ${
@@ -392,14 +451,14 @@ function renderDeveloperInfo(originalQuery, tokens,expandedTokens,expansionReaso
 
         <div class="expansion-box">
 
-        <b>${key}</b>
+        <b>${escapeHtml(key)}</b>
 
        <div style="font-size:22px;text-align:center;">
         ⬇
         </div>
 
         <p>
-        ${values.join("<br>")}
+        ${values.map(escapeHtml).join("<br>")}
         </p>
 
         <br>
@@ -418,7 +477,7 @@ function renderDeveloperInfo(originalQuery, tokens,expandedTokens,expansionReaso
     <h3>Detected Intents</h3>
    
     ${intents.map(i=>`
-        <p>🧠 ${i[0]} (${i[1]}%)</p>
+        <p>🧠 ${escapeHtml(i[0])} (${escapeHtml(i[1])}%)</p>
     `).join("")}
 
     <hr>
