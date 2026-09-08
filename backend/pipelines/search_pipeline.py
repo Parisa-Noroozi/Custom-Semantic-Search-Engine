@@ -1,5 +1,5 @@
 from backend.services.query.query_processor import QueryProcessor
-from backend.services.search.search import search
+from backend.services.search.search_retriever import SearchRetriever
 from backend.services.search.semantic_ranker import SemanticRanker
 from backend.services.embeddings.document_embeddings import DocumentEmbeddings
 from backend.services.search.result_scorer import ResultScorer
@@ -10,9 +10,10 @@ class SearchPipeline:
     def __init__(self, documents):
         self.documents = documents
         self.query_processor = QueryProcessor()
+        self.retriever = SearchRetriever(self.documents)
         self.semantic_ranker = SemanticRanker()
         self.document_embedding = DocumentEmbeddings(self.documents)
-        self.search_function = search
+        
 
         self.intent_keywords = {
             "Learning": {
@@ -42,17 +43,10 @@ class SearchPipeline:
     def search(self, query):
         query, weights = self.query_processor.process(query)
 
-        query_vector = self.semantic_ranker.get_query_vector(
-            query.expanded_tokens
-        )
-
-        results = self.search_function(
-            query.expanded_tokens,
-            self.documents
-        )
+        query_vector = self.semantic_ranker.get_query_vector(query.expanded_tokens )
+        results = self.retriever.retrieve(query.expanded_tokens)
 
         new_results = []
-
         for score, document in results:
             score_data = self.result_scorer.score(
                 bm25_score=score,
