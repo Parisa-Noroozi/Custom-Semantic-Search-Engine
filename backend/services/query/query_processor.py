@@ -1,8 +1,7 @@
 from backend.services.query.tokenizer import tokenize
-from backend.services.intent_detector import IntentDetector
-from backend.services.query_expander import QueryExpander
-from backend.services.ranking_strategy import RankingStrategy
-
+from backend.services.query.intent_detector import IntentDetector
+from backend.services.query.query_expander import QueryExpander
+from backend.services.query.ranking_strategy import RankingStrategy
 
 class QueryProcessor:
     def __init__(self):
