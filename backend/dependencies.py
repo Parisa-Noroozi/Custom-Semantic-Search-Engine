@@ -1,7 +1,7 @@
 from backend.data.documents import DOCUMENTS
 from backend.services.query.autocomplete import autocomplete
 from backend.services.search.index import build_index
-from backend.services.search_engine import SearchEngine
+from backend.services.search.search_engine import SearchEngine
 
 
 index = build_index(DOCUMENTS)

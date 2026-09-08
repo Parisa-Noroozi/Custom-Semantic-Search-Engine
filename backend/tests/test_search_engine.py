@@ -1,5 +1,5 @@
 from backend.models.query import Query
-from backend.services.search_engine import SearchEngine
+from backend.services.search.search_engine import SearchEngine
 from backend.services.search.index import build_index
 
 documents = [
