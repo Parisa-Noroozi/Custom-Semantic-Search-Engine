@@ -1,8 +1,5 @@
-from backend.services.query.tokenizer import tokenize
-from backend.services.intent_detector import IntentDetector
+from backend.services.query.query_processor import QueryProcessor
 from backend.services.search.search import search
-from backend.services.query_expander import QueryExpander
-from backend.services.ranking_strategy import RankingStrategy
 from backend.services.search.semantic_ranker import SemanticRanker
 from backend.services.embeddings.document_embeddings import DocumentEmbeddings
 from backend.services.search.result_scorer import ResultScorer
@@ -12,9 +9,7 @@ from backend.services.search.result_builder import ResultBuilder
 class SearchPipeline:
     def __init__(self, documents):
         self.documents = documents
-        self.intent_detector = IntentDetector()
-        self.query_expander = QueryExpander()
-        self.ranking_strategy = RankingStrategy()
+        self.query_processor = QueryProcessor()
         self.semantic_ranker = SemanticRanker()
         self.document_embedding = DocumentEmbeddings(self.documents)
         self.search_function = search
@@ -45,24 +40,7 @@ class SearchPipeline:
     
 
     def search(self, query):
-        tokens = tokenize(query.original_query)
-        query.set_tokens(tokens)
-
-        intents = self.intent_detector.detect_intent(tokens)
-        query.set_intents(intents)
-
-        expanded_tokens, expansion_reason, expansion_weights = (
-            self.query_expander.expand_query(tokens)
-        )
-
-        query.set_expanded_tokens(expanded_tokens)
-        query.set_expansion_reason(expansion_reason)
-        query.set_expansion_weights(expansion_weights)
-
-        weights = self.ranking_strategy.get_weights(
-            query.intents,
-            query.tokens
-        )
+        query, weights = self.query_processor.process(query)
 
         query_vector = self.semantic_ranker.get_query_vector(
             query.expanded_tokens
