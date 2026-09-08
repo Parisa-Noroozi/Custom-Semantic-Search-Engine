@@ -2,12 +2,13 @@ from fastapi import APIRouter
 from backend.data.documents import DOCUMENTS
 from backend.dependencies import search_engine
 from backend.models.query import Query
+from backend.api.schemas import SearchResponseSchema
 
 
 router = APIRouter()
 
 
-@router.get("/search")
+@router.get("/search", response_model=SearchResponseSchema)
 def search_api(q: str):
     query = Query(q)
 
