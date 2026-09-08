@@ -4,9 +4,8 @@ from backend.services.search.search import search
 from backend.services.query_expander import QueryExpander
 from backend.services.ranking_strategy import RankingStrategy
 from backend.services.search.semantic_ranker import SemanticRanker
-from backend.services.search.ranking_engine import RankingEngine
 from backend.services.embeddings.document_embeddings import DocumentEmbeddings
-from backend.services.embeddings.knowledge_base import KNOWLEDGE_BASE
+from backend.services.search.result_scorer import ResultScorer
 
 
 class SearchPipeline:
@@ -17,7 +16,6 @@ class SearchPipeline:
         self.ranking_strategy = RankingStrategy()
         self.semantic_ranker = SemanticRanker()
         self.document_embedding = DocumentEmbeddings(self.documents)
-        self.ranker = RankingEngine()
         self.search_function = search
 
         self.intent_keywords = {
@@ -36,33 +34,13 @@ class SearchPipeline:
                 "document"
             }
         }
+        self.result_scorer = ResultScorer(
+            self.semantic_ranker,
+            self.document_embedding,
+            self.intent_keywords
+        )
 
-    def apply_intent_bonus(self, score, document, intents):
-        document_tokens = set(tokenize(document))
-        bonus = 0
-
-        for intent, percentage in intents:
-            keywords = self.intent_keywords.get(intent, set())
-
-            if document_tokens.intersection(keywords):
-                bonus += percentage / 100
-
-        return score + bonus
-
-    @staticmethod
-    def contains_term(document_tokens, term):
-        term_tokens = term.split()
-
-        if len(term_tokens) == 1:
-            return term in document_tokens
-
-        term_length = len(term_tokens)
-
-        for i in range(len(document_tokens) - term_length + 1):
-            if document_tokens[i:i + term_length] == term_tokens:
-                return True
-
-        return False
+    
 
     def search(self, query):
         tokens = tokenize(query.original_query)
@@ -96,84 +74,24 @@ class SearchPipeline:
         new_results = []
 
         for score, document in results:
-            document_tokens = tokenize(document)
-            document_token_set = set(document_tokens)
-            document_concepts = []
-
-            document_vector = self.document_embedding.get(document)
-
-            for token in document_tokens:
-                normalized_token = (
-                    self.semantic_ranker.embedding_engine.normalize_token(token)
-                )
-
-                if (
-                    normalized_token
-                    in self.semantic_ranker.embedding_engine.knowledge
-                ):
-                    document_concepts.append(normalized_token)
-
-            semantic_score = (
-                self.semantic_ranker.semantic_score_from_vector(
-                    query_vector,
-                    document_vector
-                )
-            )
-
-            intent_score = self.apply_intent_bonus(
-                score,
-                document,
-                query.intents
-            )
-
-            intent_bonus = intent_score - score
-
-            exact_bonus = 0
-
-            for token in query.tokens:
-                if token in document_token_set:
-                    exact_bonus += 2
-
-            expansion_bonus = 0
-
-            for token in query.expanded_tokens:
-                if token in query.tokens:
-                    continue
-
-                if self.contains_term(document_tokens, token):
-                    expansion_bonus += query.expansion_weights.get(
-                        token,
-                        0
-                    )
-
-            query_concepts = (
-                self.semantic_ranker.embedding_engine.extract_concepts(
-                    query.expanded_tokens
-                )
-            )
-
-            relation_bonus = self.ranker.relation_bonus(
-                query_concepts,
-                document_token_set,
-                KNOWLEDGE_BASE
-            )
-
-            category_bonus = self.semantic_ranker.category_similarity(
-                query_concepts,
-                document_concepts
-            )
-
-            final_score = self.ranker.calculate_score(
+            score_data = self.result_scorer.score(
                 bm25_score=score,
-                semantic_score=semantic_score,
-                expansion_bonus=expansion_bonus,
-                intent_bonus=intent_bonus,
-                exact_bonus=exact_bonus,
-                relation_bonus=relation_bonus,
-                category_bonus=category_bonus,
+                document=document,
+                query=query,
+                query_vector=query_vector,
                 weights=weights
             )
 
+            document_tokens = score_data["document_tokens"]
+            document_token_set = score_data["document_token_set"]
+            semantic_score = score_data["semantic_score"]
+            intent_bonus = score_data["intent_bonus"]
+            exact_bonus = score_data["exact_bonus"]
+            expansion_bonus = score_data["expansion_bonus"]
+            query_concepts = score_data["query_concepts"]
+            relation_bonus = score_data["relation_bonus"]
+            category_bonus = score_data["category_bonus"]
+            final_score = score_data["final_score"]
             matched_intents = []
 
             for intent, percentage in query.intents:
