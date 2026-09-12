@@ -89,6 +89,22 @@ def test_search_endpoint_rejects_empty_query():
     )
 
     assert response.status_code == 422
+    
+def test_suggest_endpoint_rejects_whitespace_query():
+    response= client.get(
+        "/suggest",
+        params={"q": "   "},
+    )
+
+    assert response.status_code == 422
+    
+    
+def test_search_endpoint_rejects_whitespace_query () :
+    response= client.get(
+        "/search",
+        params={"q": "   "},
+    )
+    assert response.status_code == 422
 
 
 def test_suggest_endpoint_returns_success():

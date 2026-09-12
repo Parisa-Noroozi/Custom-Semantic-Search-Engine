@@ -6,5 +6,5 @@ router = APIRouter()
 
 
 @router.get("/suggest")
-def suggest( q: str = Query(min_length=1),):
+def suggest( q: str = Query(min_length=1, pattern=r".*\S.*",),):
     return get_suggestions(q)
