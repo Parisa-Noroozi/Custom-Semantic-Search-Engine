@@ -9,7 +9,12 @@ router = APIRouter()
 
 
 @router.get("/search", response_model=SearchResponseSchema)
-def search_api(q: str = QueryParameter(min_length=1),):
+def search_api(
+    q: str = QueryParameter(
+        min_length=1,
+        pattern=r".*\S.*",
+    ),
+):
     
     query = Query(q)
 
