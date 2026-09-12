@@ -79,6 +79,16 @@ def test_search_endpoint_requires_query_parameter():
     response=client.get("/search")
 
     assert response.status_code == 422
+    
+    
+    
+def test_search_endpoint_rejects_empty_query():
+    response = client.get(
+        "/search",
+        params={"q": ""},
+    )
+
+    assert response.status_code == 422
 
 
 def test_suggest_endpoint_returns_success():
@@ -103,4 +113,14 @@ def test_suggest_endpoint_returns_json():
 
 def test_suggest_endpoint_requires_query_parameter():
     response=client.get("/suggest")
+    assert response.status_code == 422
+    
+    
+    
+def test_suggest_endpoint_rejects_empty_query():
+    response = client.get(
+        "/suggest",
+        params={"q": ""},
+    )
+
     assert response.status_code == 422
