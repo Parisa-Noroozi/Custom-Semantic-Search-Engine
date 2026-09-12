@@ -5,6 +5,9 @@ from backend.api.health import router as health_router
 from backend.api.search import router as search_router
 from backend.api.suggest import router as suggest_router
 from backend.core.config import (
+    APP_DESCRIPTION,
+    APP_TITLE,
+    APP_VERSION,
     CORS_ALLOW_CREDENTIALS,
     CORS_ALLOW_HEADERS,
     CORS_ALLOW_METHODS,
@@ -12,7 +15,10 @@ from backend.core.config import (
 )
 
 
-app = FastAPI()
+app = FastAPI(
+    title=APP_TITLE,
+    description=APP_DESCRIPTION,
+    version=APP_VERSION,)
 
 app.add_middleware(
     CORSMiddleware,
