@@ -1,6 +1,6 @@
 from backend.services.query.tokenizer import tokenize
 from backend.services.search.bm25 import bm25, idf
-from backend.services.query.intent_detector import IntentDetector
+
 
 def search(tokens, documents ):
     results=[]
