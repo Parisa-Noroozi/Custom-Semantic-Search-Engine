@@ -83,3 +83,17 @@ def test_reciprocal_rank_returns_zero_without_match():
         ["doc3"],
     )
     assert score == 0.0
+    
+    
+    
+def test_precision_at_k_uses_k_when_fewer_results_are_returned():
+    retrieved=["doc1", "doc2"]
+    relevant=["doc1", "doc2"]
+
+    score=precision_at_k(
+        retrieved,
+        relevant,
+        k=5,
+    )
+
+    assert score == 2 / 5
