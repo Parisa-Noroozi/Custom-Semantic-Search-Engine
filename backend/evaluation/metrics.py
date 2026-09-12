@@ -3,10 +3,6 @@ def precision_at_k(retrieved, relevant , k):
         return 0.0
     
     top_k=retrieved[:k]
-    
-    if not top_k:
-        return 0.0
-    
     relevant_set=set(relevant)
     
     maches=sum(
@@ -14,7 +10,8 @@ def precision_at_k(retrieved, relevant , k):
         for document in top_k
         if document in relevant_set
     )
-    return maches / len(top_k)
+    return maches / k
+
 
 def recall_at_k(retrieved, relevant ,k ):
     if k <= 0 or not relevant:
