@@ -1,4 +1,4 @@
 -r requirements.txt
 
-pytest
+pytest==8.3.5
 httpx2==2.12.0
