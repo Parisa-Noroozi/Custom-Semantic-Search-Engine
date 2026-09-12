@@ -170,6 +170,103 @@ No pretrained NLP models were used.
 
 ---
 
+## Getting Started
+
+### Requirements
+
+Before running the project, make sure the following tools are installed:
+
+- Python 3.13
+- pip
+- Git
+
+### Clone the Repository
+
+Clone the project and move into the repository directory:
+
+```bash
+git clone https://github.com/Parisa-Noroozi/Custom-Semantic-Search-Engine.git
+cd Custom-Semantic-Search-Engine
+```
+
+### Create a Virtual Environment
+
+Using a virtual environment keeps the project dependencies isolated from other Python projects on your system.
+
+On Windows:
+
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+```
+
+On macOS or Linux:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+### Install Dependencies
+
+To install only the dependencies required to run the application:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+For development and testing, install the development requirements instead:
+
+```bash
+python -m pip install -r requirements-dev.txt
+```
+
+The development requirements also install the runtime dependencies automatically.
+
+### Run the Tests
+
+Run the backend test suite from the project root:
+
+```bash
+python -m pytest backend/tests -q
+```
+
+### Start the API Server
+
+Start the FastAPI application with Uvicorn:
+
+```bash
+uvicorn backend.main:app --reload
+```
+
+The API will be available at:
+
+```text
+http://127.0.0.1:8000
+```
+
+### API Documentation
+
+FastAPI provides interactive API documentation automatically.
+
+After starting the server, open:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+### Main API Endpoints
+
+The main API endpoints are:
+
+```text
+GET /health
+GET /search?q=<query>
+GET /suggest?q=<prefix>
+```
+
+---
+
 ## Project Structure
 
 
