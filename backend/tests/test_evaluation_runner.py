@@ -46,6 +46,7 @@ def test_evaluation_scores_are_between_zero_and_one():
     assert 0 <= summary["mean_precision_at_k"] <= 1
     assert 0 <= summary["mean_recall_at_k"] <= 1
     assert 0 <= summary["mrr"] <= 1
+    assert 0 <= summary["mean_ndcg_at_k"] <= 1
 
 
 def test_each_query_result_contains_metrics():
@@ -61,6 +62,7 @@ def test_each_query_result_contains_metrics():
         assert"precision_at_k" in result
         assert"recall_at_k" in result
         assert"reciprocal_rank" in result
+        assert "ndcg_at_k" in result
 
 
 def test_empty_evaluation_dataset_returns_zero_scores():
@@ -74,3 +76,4 @@ def test_empty_evaluation_dataset_returns_zero_scores():
     assert evaluation["summary"]["mean_precision_at_k"] == 0.0
     assert evaluation["summary"]["mean_recall_at_k"] == 0.0
     assert evaluation["summary"]["mrr"] == 0.0
+    assert evaluation["summary"]["mean_ndcg_at_k"] == 0.0
