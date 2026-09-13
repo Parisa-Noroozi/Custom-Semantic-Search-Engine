@@ -25,8 +25,13 @@ def format_evaluation_report(evaluation, k):
             "Reciprocal Rank: "
             f"{result['reciprocal_rank']:.4f}"
         )
+        lines.append(
+            f"nDCG@{k}: "
+            f"{result['ndcg_at_k']:.4f}"
+        )
         lines.append("")
     summary = evaluation["summary"]
+    
 
     lines.extend(
         [
@@ -42,6 +47,10 @@ def format_evaluation_report(evaluation, k):
                 f"{summary['mean_recall_at_k']:.4f}"
             ),
             f"MRR: {summary['mrr']:.4f}",
+            (
+                f"Mean nDCG@{k}: "
+                f"{summary['mean_ndcg_at_k']:.4f}"
+            ),
         ]
     )
 
