@@ -1,5 +1,5 @@
 from backend.models.query import Query
-from backend.evaluation.metrics import ( precision_at_k,recall_at_k, reciprocal_rank,)
+from backend.evaluation.metrics import ( precision_at_k,recall_at_k, reciprocal_rank, ndcg_at_k ,)
 
 
 def evaluate_search_engine(search_engine, dataset, k=5):
@@ -7,6 +7,7 @@ def evaluate_search_engine(search_engine, dataset, k=5):
     precision_scores=[]
     recall_scores=[]
     reciprocal_rank_scores=[]
+    ndcg_scores=[]
     for case in dataset:
         query_text=case["query"]
         relevant_documents=case["relevant_documents"]
@@ -32,10 +33,16 @@ def evaluate_search_engine(search_engine, dataset, k=5):
             retrieved_documents,
             relevant_documents,
         )
+        
+        ndcg=ndcg_at_k(
+            retrieved_documents,
+            relevant_documents,
+            k ,)
 
         precision_scores.append(precision)
         recall_scores.append(recall)
         reciprocal_rank_scores.append(rr)
+        ndcg_scores.append(ndcg)
 
         query_results.append(
             {
@@ -44,6 +51,7 @@ def evaluate_search_engine(search_engine, dataset, k=5):
                 "precision_at_k": precision,
                 "recall_at_k": recall,
                 "reciprocal_rank": rr,
+                "ndcg_at_k": ndcg,
             }
         )
 
@@ -57,6 +65,7 @@ def evaluate_search_engine(search_engine, dataset, k=5):
                 "mean_precision_at_k": 0.0,
                 "mean_recall_at_k": 0.0,
                 "mrr": 0.0,
+                "mean_ndcg_at_k": 0.0,
             },
         }
 
@@ -75,5 +84,8 @@ def evaluate_search_engine(search_engine, dataset, k=5):
             "mrr": (
                 sum(reciprocal_rank_scores)/ query_count
             ),
+            "mean_ndcg_at_k":(
+                sum(ndcg_scores) / query_count
+            ) ,
         },
     }

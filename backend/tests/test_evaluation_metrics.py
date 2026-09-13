@@ -2,6 +2,8 @@ from backend.evaluation.metrics import (
     precision_at_k,
     recall_at_k,
     reciprocal_rank,
+    dcg_at_k,
+    ndcg_at_k,
 )
 
 
@@ -97,3 +99,63 @@ def test_precision_at_k_uses_k_when_fewer_results_are_returned():
     )
 
     assert score == 2 / 5
+    
+    
+    
+def test_dcg_at_k_rewards_relevant_documents_by_rank():
+    retrieved=["doc1", "doc2", "doc3"]
+    relevant=["doc1", "doc3"]
+    score= dcg_at_k(
+        retrieved,
+        relevant,
+        k=3,)
+    assert score == 1.5
+
+
+def test_dcg_at_k_returns_zero_without_relevant_results():
+    score=dcg_at_k(
+        ["doc1", "doc2"],
+        ["doc3"],
+        k=2,)
+    assert score == 0.0
+
+
+
+
+def test_ndcg_at_k_returns_one_for_ideal_ranking():
+    retrieved=["doc1" , "doc2",  "doc3"]
+    relevant=["doc1",  "doc2"]
+    score=ndcg_at_k(
+        retrieved,
+        relevant,
+        k=3, )
+    assert score == 1.0
+
+
+
+
+def test_ndcg_at_k_penalizes_lower_relevant_results():
+    retrieved=["doc3", "doc1", "doc2"]
+    relevant= ["doc1", "doc2"]
+
+    score =ndcg_at_k(
+        retrieved,
+        relevant,
+        k=3,)
+    assert 0.0 < score < 1.0
+
+
+
+def test_ndcg_at_k_returns_zero_without_relevant_documents():
+    score= ndcg_at_k(
+        ["doc1", "doc2"],
+        [],
+        k=2,)
+    assert score == 0.0
+
+def test_ndcg_at_k_returns_zero_for_non_positive_k():
+    score=ndcg_at_k(
+        ["doc1"],
+        ["doc1"],
+        k=0,)
+    assert score == 0.0
