@@ -9,6 +9,7 @@ def test_report_contains_title():
             "mean_precision_at_k": 0.0,
             "mean_recall_at_k": 0.0,
             "mrr": 0.0,
+            "mean_ndcg_at_k": 0.0,
         },
     }
 
@@ -27,6 +28,7 @@ def test_report_contains_summary_metrics():
             "mean_precision_at_k": 0.5,
             "mean_recall_at_k": 0.75,
             "mrr": 1.0,
+            "mean_ndcg_at_k": 0.8,
         },
     }
 
@@ -49,6 +51,7 @@ def test_report_contains_query_metrics():
                 "precision_at_k": 0.2,
                 "recall_at_k": 1.0,
                 "reciprocal_rank": 1.0,
+                "ndcg_at_k": 0.9,
             }
         ],
         "summary": {
@@ -56,6 +59,7 @@ def test_report_contains_query_metrics():
             "mean_precision_at_k": 0.2,
             "mean_recall_at_k": 1.0,
             "mrr": 1.0,
+            "mean_ndcg_at_k": 0.8,
         },
     }
 
@@ -67,6 +71,7 @@ def test_report_contains_query_metrics():
     assert "Precision@5: 0.2000" in report
     assert "Recall@5: 1.0000" in report
     assert "Reciprocal Rank: 1.0000" in report
+    assert "Mean nDCG@5: 0.8000" in report
 
 
 def test_report_uses_requested_k():
@@ -77,6 +82,7 @@ def test_report_uses_requested_k():
             "mean_precision_at_k": 0.0,
             "mean_recall_at_k": 0.0,
             "mrr": 0.0,
+            "mean_ndcg_at_k": 0.0,
         },
     }
     report = format_evaluation_report(
@@ -85,3 +91,4 @@ def test_report_uses_requested_k():
     )
     assert "Mean Precision@3" in report
     assert "Mean Recall@3" in report
+    assert "Mean nDCG@3" in report
