@@ -4,8 +4,8 @@ from fastapi import APIRouter
 router = APIRouter()
 
 
-@router.get("/")
-def home():
+@router.get("/health")
+def health():
     return {
         "message": "Smart Search Engine"
     }
