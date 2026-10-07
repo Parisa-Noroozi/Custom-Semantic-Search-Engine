@@ -5,12 +5,18 @@ client=TestClient(app)
 
 
 def test_health_endpoint():
-    response=client.get("/")
+    response=client.get("/health")
 
     assert response.status_code == 200
     assert response.json() == {
         "message": "Smart Search Engine"
     }
+    
+    
+def test_frontend_endpoint():
+    response=client.get("/")
+    assert response.status_code == 200
+    assert "text/html" in response.headers["content-type"]
 
 
 def test_search_endpoint_returns_success():
